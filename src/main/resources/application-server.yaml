@@ -1,0 +1,31 @@
+
+
+
+custom:
+  requester:
+    base-url: ${BACKEND_SERVER_ENDPOINT}
+    token: ${BACKEND_SERVER_TOKEN}
+
+  batch:
+
+    sharp-hour-alarmer:
+      uuid: ${SHARP_HOUR_ALARMER_UUID}
+
+    sharp-minute-alarmer:
+      uuid: ${SHARP_MINUTE_ALARMER_UUID}
+
+    sunrise-alarmer:
+      uuid: ${SUNRISE_ALARMER_UUID}
+      weather-url: ${SUNRISE_ALARMER_WEATHER_URL}
+      location:
+        latitude: ${SUNRISE_ALARMER_LATITUDE}
+        longitude: ${SUNRISE_ALARMER_LONGITUDE}
+      token: ${SUNRISE_ALARMER_TOKEN}
+
+    sunset-alarmer:
+      uuid: ${SUNSET_ALARMER_UUID}
+      weather-url: ${SUNSET_ALARMER_WEATHER_URL}
+      location:
+        latitude: ${SUNSET_ALARMER_LATITUDE}
+        longitude: ${SUNSET_ALARMER_LONGITUDE}
+      token: ${SUNSET_ALARMER_TOKEN}
