@@ -3,12 +3,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "3.1.2"
     id("io.spring.dependency-management") version "1.1.2"
-    kotlin("jvm") version "1.8.22"
-    kotlin("plugin.spring") version "1.8.22"
+    id("org.graalvm.buildtools.native") version "0.9.27"
+    kotlin("jvm") version "1.9.10"
+    kotlin("plugin.spring") version "1.9.10"
 }
 
 group = "dev.lutergs"
-version = "0.0.1"
+version = "0.0.2"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -33,9 +34,23 @@ tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
         jvmTarget = "17"
+//        jvmTarget = "21" // Java 21 is not yet supported by gradle
     }
 }
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+// graalVM setting
+graalvmNative {
+    binaries {
+        named("main") {
+            val javaVersion: String = System.getenv("JAVA_VERSION")
+            javaLauncher.set(javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(javaVersion.toInt()))
+                vendor.set(JvmVendorSpec.matching("Oracle"))
+            })
+        }
+    }
 }
