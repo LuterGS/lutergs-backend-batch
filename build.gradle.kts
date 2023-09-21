@@ -44,13 +44,20 @@ tasks.withType<Test> {
 
 // graalVM setting
 graalvmNative {
-    binaries {
-        named("main") {
-            val javaVersion: String = System.getenv("JAVA_VERSION")
-            javaLauncher.set(javaToolchains.launcherFor {
-                languageVersion.set(JavaLanguageVersion.of(javaVersion.toInt()))
-                vendor.set(JvmVendorSpec.matching("Oracle"))
-            })
-        }
+    binaries.all {
+        resources.autodetect()
     }
+    toolchainDetection.set(false)
 }
+
+//graalvmNative {
+//    binaries {
+//        named("main") {
+//            val javaVersion: String = System.getenv("JAVA_VERSION")
+//            javaLauncher.set(javaToolchains.launcherFor {
+//                languageVersion.set(JavaLanguageVersion.of(javaVersion.toInt()))
+//                vendor.set(JvmVendorSpec.matching("Oracle"))
+//            })
+//        }
+//    }
+//}
