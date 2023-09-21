@@ -4,7 +4,7 @@ ARG ACTIVE_PROFILES
 ENV JAVA_VERSION=17
 RUN mkdir /lutergs-backend-batch
 COPY . /lutergs-backend-batch
-RUN echo "spring.profiles.active=${ACTIVE_PROFILES}" > /lutergs-backend/src/main/resources/application.properties
+RUN echo "spring.profiles.active=${ACTIVE_PROFILES}" > /lutergs-backend-batch/src/main/resources/application.properties
 WORKDIR /lutergs-backend-batch
 
 RUN ./gradlew nativeCompile
