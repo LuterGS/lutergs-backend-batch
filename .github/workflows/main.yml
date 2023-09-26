@@ -55,6 +55,9 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.K8S_CONFIG }} # Use secret (https://developer.github.com/actions/managing-workflows/storing-secrets/)
           context: #If left unspecified, current-context from kubeconfig is used as default
+
+      - name: refresh deployment
+        id: refresh-k8s-deployment
         run: |
           kubectl rollout restart deployment ${{ vars.K8S_DEPLOYMENT_NAME }} -n ${{ vars.K8S_NAMESPACE }}
 
