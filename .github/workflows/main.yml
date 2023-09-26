@@ -7,10 +7,11 @@ on:
 env:
   ENVS: "envs"
 
-# for AWS credentials
+# for AWS credentials and k8s setting
 permissions:
   id-token: write
   contents: read
+  actions: read
 
 jobs:
   publish-docker-image-to-aws-ecr:
@@ -25,7 +26,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_CONNECT_ARN }}
-          aws-region: ap-northeast-2
+          aws-region: ${{ vars.AWS_REGION }}
 
       - name: login to AWS ECR
         id: login-to-ecr
@@ -39,4 +40,21 @@ jobs:
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg ACTIVE_PROFILES=${{ vars.PROFILE }} .
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          
+          docker push $REGISTRY/$REPOSITORY:latest
+
+      - name: install kubectl
+        id: install-kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: default # default is latest stable
+
+      - name: set k8s context
+        id: set-k8s-context
+        uses: azure/k8s-set-context@v1
+        with:
+          method: kubeconfig
+          kubeconfig: ${{ secrets.K8S_CONFIG }} # Use secret (https://developer.github.com/actions/managing-workflows/storing-secrets/)
+          context: #If left unspecified, current-context from kubeconfig is used as default
+        run: |
+          kubectl rollout restart deployment ${{ vars.K8S_DEPLOYMENT_NAME }} -n ${{ vars.K8S_NAMESPACE }}
+
