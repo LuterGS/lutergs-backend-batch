@@ -45,7 +45,7 @@ jobs:
         id: install-kubectl
         uses: azure/setup-kubectl@v3
         with:
-          version: default # default is latest stable
+          version: # default is latest stable
 
       - name: set k8s context
         id: set-k8s-context
