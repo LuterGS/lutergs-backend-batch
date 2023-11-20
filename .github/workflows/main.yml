@@ -43,6 +43,7 @@ jobs:
         with:
           context: .
           platforms: linux/arm64
+          file: Dockerfile-JVM
           push: true
           tags: |
             ${{ steps.login-to-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY_NAME }}:${{ github.sha }}

@@ -1,6 +1,7 @@
 package dev.lutergs.lutergsbackendbatch.requester
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -17,6 +18,7 @@ class ScheduledAlarmRequester(
     private val topicRequester: WebClient = WebClient.builder()
         .baseUrl(baseUrl)
         .build()
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun request(triggerTopicRequest: TriggerTopicRequest): Mono<List<TriggerTopicResponse>> {
         return this.topicRequester
@@ -26,12 +28,22 @@ class ScheduledAlarmRequester(
                 it.set("Authorization", this.token)
             }
             .body(BodyInserters.fromValue(this.objectMapper.writeValueAsString(triggerTopicRequest)))
-            .retrieve()
-            .bodyToMono(Array<TriggerTopicResponse>::class.java)
-            .onErrorResume {
-                println(it)
-                Mono.justOrEmpty(null)
-            }
-            .flatMap { Mono.just(it.toList()) }
+            .exchangeToMono {
+                when {
+                    it.statusCode().is2xxSuccessful -> {
+                        it.bodyToMono(Array<TriggerTopicResponse>::class.java)
+                    }
+                    else -> {
+                        it.createException()
+                            .flatMap { exception ->
+                                this.logger.error("Error on ${triggerTopicRequest.topicUUID}!\n" +
+                                        "\tstatusCode : ${exception.statusCode}\n" +
+                                        "\trawMessage : ${exception.responseBodyAsString}")
+                                Mono.error(exception)
+                            }
+                    }
+                }
+            }.flatMap {
+                Mono.just(it.toList()) }
     }
 }
