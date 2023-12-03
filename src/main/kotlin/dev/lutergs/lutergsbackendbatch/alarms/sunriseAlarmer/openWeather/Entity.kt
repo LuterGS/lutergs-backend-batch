@@ -55,13 +55,3 @@ data class Weather (
         return "https://openweathermap.org/img/wn/${this.icon}@2x.png"
     }
 }
-
-class Entity {
-}
-
-//fun t2 () {
-//    Timestamp.value
-//    Timestamp.from(LocalDateTime.now().toInstant(ZoneOffset.ofHours(9)))
-//        .let { }
-//}
-//val t = LocalDateTime.now().stamp

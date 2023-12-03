@@ -13,7 +13,7 @@ abstract class Scheduler (
 
     abstract fun batch()
     abstract fun produceMessage(): Mono<TriggerTopicRequest>
-    fun sendMessage(triggerTopicRequest: TriggerTopicRequest): Mono<List<TriggerTopicResponse>> {
-        return this.scheduledAlarmRequester.request(triggerTopicRequest)
+    fun sendMessage(triggerTopicRequest: TriggerTopicRequest, topicUUID: String): Mono<List<TriggerTopicResponse>> {
+        return this.scheduledAlarmRequester.request(triggerTopicRequest, topicUUID)
     }
 }

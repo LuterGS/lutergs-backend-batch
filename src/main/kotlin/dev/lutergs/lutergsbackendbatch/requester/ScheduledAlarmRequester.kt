@@ -20,9 +20,12 @@ class ScheduledAlarmRequester(
         .build()
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    fun request(triggerTopicRequest: TriggerTopicRequest): Mono<List<TriggerTopicResponse>> {
+    fun request(triggerTopicRequest: TriggerTopicRequest, topicUUID: String): Mono<List<TriggerTopicResponse>> {
         return this.topicRequester
             .post()
+            .uri { it.path("/${topicUUID}")
+                .build()
+            }
             .headers {
                 it.contentType = MediaType.APPLICATION_JSON
                 it.set("Authorization", this.token)
@@ -36,7 +39,7 @@ class ScheduledAlarmRequester(
                     else -> {
                         it.createException()
                             .flatMap { exception ->
-                                this.logger.error("Error on ${triggerTopicRequest.topicUUID}!\n" +
+                                this.logger.error("Error on ${topicUUID}!\n" +
                                         "\tstatusCode : ${exception.statusCode}\n" +
                                         "\trawMessage : ${exception.responseBodyAsString}")
                                 Mono.error(exception)

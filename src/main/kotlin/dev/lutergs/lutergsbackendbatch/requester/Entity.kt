@@ -1,7 +1,6 @@
 package dev.lutergs.lutergsbackendbatch.requester
 
 data class TriggerTopicRequest(
-    val topicUUID: String,
     val title: String,
     val message: String,
     val imageUrl: String?

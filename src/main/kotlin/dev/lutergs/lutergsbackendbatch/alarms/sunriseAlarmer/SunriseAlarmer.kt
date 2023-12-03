@@ -31,7 +31,7 @@ class SunriseAlarmer(
     @Scheduled(cron = "0 0 4 * * *")
     override fun batch() {
         this.produceMessage()
-            .flatMap { this.sendMessage(it) }
+            .flatMap { this.sendMessage(it, this.uuid) }
             .subscribe()
     }
 
@@ -53,7 +53,6 @@ class SunriseAlarmer(
                     .let { Mono.just(response).delayElement(it) } }
             .flatMap {
                 Mono.just(TriggerTopicRequest(
-                    this.uuid,
                     "일출입니다!",
                     "해가 떠오릅니다. 지금은 ${it.current.weather[0].description} 날씨입니다.",
                     it.current.weather[0].getIconUrl()

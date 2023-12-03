@@ -22,17 +22,15 @@ class SharpHourAlarmer(
     @Scheduled(cron = "0 0 * * * *")
     override fun batch() {
         this.produceMessage()
-            .flatMap { this.sendMessage(it) }
+            .flatMap { this.sendMessage(it, this.uuid) }
             .subscribe()
     }
 
     override fun produceMessage(): Mono<TriggerTopicRequest> {
-        return LocalDateTime.now()
-            .let { TriggerTopicRequest(
-                uuid,
-                "정각 알림",
-                "${it.hour}시입니다",
-                null ) }
-            .let { Mono.just(it) }
+        return TriggerTopicRequest(
+            "정각 알림",
+            "${LocalDateTime.now().hour}시입니다",
+            null
+        ).let { Mono.just(it) }
     }
 }

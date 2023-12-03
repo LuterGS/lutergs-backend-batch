@@ -30,7 +30,7 @@ class SunsetAlarmer(
     @Scheduled(cron = "0 0 16 * * *")
     override fun batch() {
         this.produceMessage()
-            .flatMap { this.sendMessage(it) }
+            .flatMap { this.sendMessage(it, this.uuid) }
             .subscribe()
     }
 
@@ -52,7 +52,6 @@ class SunsetAlarmer(
                     .let { Mono.just(response).delayElement(it) } }
             .flatMap {
                 Mono.just(TriggerTopicRequest(
-                    this.uuid,
                     "일몰입니다!",
                     "밤이 왔습니다. 지금은 ${it.current.weather[0].description} 날씨입니다.",
                     it.current.weather[0].getIconUrl()

@@ -4,13 +4,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "3.1.2"
     id("io.spring.dependency-management") version "1.1.2"
-    id("org.graalvm.buildtools.native") version "0.9.27"
-    kotlin("jvm") version "1.9.20"
-    kotlin("plugin.spring") version "1.9.20"
+//    id("org.graalvm.buildtools.native") version "0.9.27"
+    kotlin("jvm") version "1.9.21"
+    kotlin("plugin.spring") version "1.9.21"
 }
 
 group = "dev.lutergs"
-version = "0.1.0"
+version = "0.2.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -47,25 +47,4 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
-}
-
-// graalVM setting
-//graalvmNative {
-//    binaries.all {
-//        resources.autodetect()
-//    }
-//    toolchainDetection.set(false)
-//}
-
-graalvmNative {
-    binaries {
-        named("main") {
-            val javaVersion: String = "17"//System.getenv("JAVA_VERSION")
-            buildArgs.add("--initialize-at-build-time=org.apache.commons.logging.LogFactoryService")
-            javaLauncher.set(javaToolchains.launcherFor {
-                languageVersion.set(JavaLanguageVersion.of(javaVersion.toInt()))
-                vendor.set(JvmVendorSpec.matching("Oracle"))
-            })
-        }
-    }
 }
