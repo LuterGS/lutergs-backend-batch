@@ -1,16 +1,7 @@
-FROM gradle:8.4.0-jdk21 AS builder
+FROM amazoncorretto:21
 
 ARG ACTIVE_PROFILES
 
-RUN mkdir /lutergs-backend-batch
-COPY . /lutergs-backend-batch
-RUN echo "spring.profiles.active=${ACTIVE_PROFILES}" > /lutergs-backend-batch/src/main/resources/application.properties
-WORKDIR /lutergs-backend-batch
-
-RUN gradle bootJar
-
-FROM openjdk:21-jdk-slim-bullseye
-
 WORKDIR /
-COPY --from=builder /lutergs-backend-batch/build/libs/*.jar app.jar
+COPY ./build/libs/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "-Duser.timezone=Asia/Seoul", "/app.jar"]
