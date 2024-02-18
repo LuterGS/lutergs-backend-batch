@@ -17,9 +17,10 @@ class ProfitMessageSender(
     @Scheduled(cron = "0 0 20 * * *")
     override fun batch() {
         WebClient.builder()
-            .baseUrl("http://coin-trader-service/earn/today")
+            .baseUrl("http://coin-trader-service/trigger-hour-analytic")
             .build()
             .post()
+            .uri { it.queryParam("hour", "24").build() }
             .header("Content-Type", "application/json")
             .retrieve()
             .toBodilessEntity()
