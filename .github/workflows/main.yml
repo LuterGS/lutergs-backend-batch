@@ -42,6 +42,7 @@ jobs:
       - name: Build JAR
         run: |
           gradle bootJar
+          echo "VERSION=$(gradle properties | grep "^version:" | awk '{print $2}')" >> "$GITHUB_ENV"
 
       - name: login to AWS ECR
         id: login-to-ecr
@@ -61,7 +62,7 @@ jobs:
           file: Dockerfile-JVM
           push: true
           tags: |
-            ${{ steps.login-to-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY_NAME }}:${{ github.sha }}
+            ${{ steps.login-to-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY_NAME }}:${{ env.VERSION }}
             ${{ steps.login-to-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY_NAME }}:latest
           build-args: |
             ACTIVE_PROFILES=${{ vars.PROFILE }}

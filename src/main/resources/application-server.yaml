@@ -7,6 +7,9 @@ custom:
     token: ${BACKEND_SERVER_TOKEN}
 
   batch:
+    muse-test-user:
+      id: ${MUSE_TEST_USER_ID}
+      url: ${MUSE_TEST_USER_URL}
 
     sharp-hour-alarmer:
       uuid: ${SHARP_HOUR_ALARMER_UUID}
