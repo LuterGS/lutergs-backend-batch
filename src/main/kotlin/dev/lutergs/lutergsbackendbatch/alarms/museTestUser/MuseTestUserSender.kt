@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dev.lutergs.lutergsbackendbatch.alarms.Scheduler
 import dev.lutergs.lutergsbackendbatch.requester.ScheduledAlarmRequester
 import dev.lutergs.lutergsbackendbatch.requester.TriggerTopicRequest
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -63,22 +60,25 @@ class MuseTestUserSender(
     )
 
     CoroutineScope(Dispatchers.IO).launch {
-      reqSet.forEach { req ->
-        delay(req.second * 1000L)
-        requester.post()
-          .uri { it.path("/track").build() }
-          .header("Authorization", "Bearer $accessToken")
-          .bodyValue("{" +
+      val jobs = reqSet.map { req ->
+        async {
+          delay(req.second * 1000L)
+          requester.post()
+            .uri { it.path("/track").build() }
+            .header("Authorization", "Bearer $accessToken")
+            .bodyValue("{" +
                 "\"track\": {" +
-                  "\"vendor\": \"Apple\"," +
-                  "\"uid\": \"${req.first}\"" +
+                "\"vendor\": \"Apple\"," +
+                "\"uid\": \"${req.first}\"" +
                 "}," +
                 "\"playbackStatus\": \"${req.third}\"" +
-              "}")
-          .retrieve()
-          .toBodilessEntity()
-          .subscribe()
+                "}")
+            .retrieve()
+            .toBodilessEntity()
+            .subscribe()
+        }
       }
+      jobs.forEach { it.await() }
     }
   }
 
