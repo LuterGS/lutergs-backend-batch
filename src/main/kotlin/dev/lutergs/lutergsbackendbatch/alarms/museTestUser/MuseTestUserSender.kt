@@ -36,7 +36,7 @@ class MuseTestUserSender(
   private fun getAccessToken(): String? {
     return this.requester.post()
       .uri { it.path("/user/login").build() }
-      .bodyValue("{\"type\":\"APPLE\",\"uid\":\"${this.id}\"")
+      .bodyValue("{\"type\":\"APPLE\",\"uid\":\"${this.id}\"}")
       .retrieve()
       .bodyToMono(String::class.java)
       .flatMap {
